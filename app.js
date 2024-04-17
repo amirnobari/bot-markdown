@@ -73,7 +73,7 @@ bot.onText(/^\/start_new_text$/, (msg) =>
         userMessages[chatId] = { message: '', markdownOption: '' }
         sendInstructions(chatId)
     }
-});
+})
 
 bot.onText(/^\/help$/, (msg) =>
 {
@@ -117,8 +117,6 @@ function sendInstructions (chatId)
         })
     })
 }
-
-
 
 // Function to send markdown options
 function sendMarkdownOptions (chatId)
@@ -204,7 +202,7 @@ bot.on('callback_query', (query) =>
         userMessages[chatId].markdownOption = data
         handleMarkdownQuery(query)
     }
-});
+})
 
 
 function handleMarkdownQuery (query)
@@ -294,9 +292,6 @@ function sendLinkPrompt (chatId)
     })
 }
 
-
-
-
 function handleHelp (chatId)
 {
     if (helpRequested)
@@ -306,7 +301,7 @@ function handleHelp (chatId)
     helpRequested = true
     const helpMessage = `
     به مرکز راهنمایی ربات Markdown خوش آمدید:
-
+    🚦 دوستان برای استفاده از این ربات به دوتا کانال ما عضو شوید 🚦
     /start_new_text -  ♻️ متن جدیدت رو بنویس ♻️
     /help -  🆘 دسترسی به بخش راهنمایی 🆘
 
@@ -331,4 +326,3 @@ function handleHelp (chatId)
         bot.sendMessage(chatId, 'برای شروع از دستور /start استفاده کنید.')
     }
 }
-
