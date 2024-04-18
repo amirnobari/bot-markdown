@@ -33,7 +33,6 @@ function saveUserMessage (userId, message)
 }
 
 
-
 // حذف پیام کاربر از فایل
 function deleteUserMessage (userId)
 {
@@ -282,12 +281,30 @@ function sendLinkPrompt (chatId)
         bot.once('message', (msg) =>
         {
             const url = msg.text.trim() // دریافت آدرس URL از پیام
-            const temporaryText = userMessages[chatId].message // متن مورد نظر کاربر
-            const formattedText = `[${temporaryText}](${url})` // ساخت متن لینک
-            bot.sendMessage(chatId, formattedText) // ارسال متن لینک به کاربر
-            // Update userMessages JSON file with the latest markdown option
-            userMessages[chatId].markdownOption = 'link'
-            fs.writeFileSync(userMessagesFile, JSON.stringify(userMessages))
+            const userId = chatId
+            const previousMessage = userMessages[userId]
+            if (previousMessage && previousMessage.markdownOption === 'link')
+            {
+                // اگر قبلاً گزینه لینک انتخاب شده بود، متن قبلی را به عنوان متن لینک استفاده کن
+                const previousText = previousMessage.message
+                const previousUrl = previousMessage.url
+                const previousFormattedText = `[${previousText}](${previousUrl})`
+                bot.sendMessage(chatId, previousFormattedText)
+            } else
+            {
+                bot.sendMessage(chatId, 'متن لینک خود را وارد کنید:').then(() =>
+                {
+                    bot.once('message', (msg) =>
+                    {
+                        const linkText = msg.text.trim() // متن لینک از پیام
+                        const formattedText = `[${linkText}](${url})` // ساخت متن لینک
+                        bot.sendMessage(chatId, formattedText) // ارسال متن لینک به کاربر
+                        // Update userMessages JSON file with the latest markdown option
+                        userMessages[userId] = { message: linkText, markdownOption: 'link', url: url }
+                        fs.writeFileSync(userMessagesFile, JSON.stringify(userMessages))
+                    })
+                })
+            }
         })
     })
 }
@@ -320,4 +337,3 @@ function handleHelp (chatId)
             .catch((error) => console.error('Error sending help message:', error))
     }
 }
-
