@@ -294,35 +294,30 @@ function sendLinkPrompt (chatId)
 
 function handleHelp (chatId)
 {
-    if (helpRequested)
-    {
-        return
-    }
-    helpRequested = true
-    const helpMessage = `
-    به مرکز راهنمایی ربات Markdown خوش آمدید:
-    🚦 دوستان برای استفاده از این ربات به دوتا کانال ما عضو شوید 🚦
-    /start_new_text -  ♻️ متن جدیدت رو بنویس ♻️
-    /help -  🆘 دسترسی به بخش راهنمایی 🆘
-
-⚠️در این عکس تمام سینتکس های مربوط به فرمت Markdown به صورت مثالی نوشته شده است ⚠️
-    `
-    bot.sendMessage(chatId, helpMessage)
-        .then(() =>
-        {
-            const url = 'https://ibb.co/7Qx87YN'
-            bot.sendPhoto(chatId, url)
-            setTimeout(() =>
-            {
-                helpRequested = false
-            }, 1000)
-        })
-        .catch((error) => console.error('Error sending help message:', error))
-
     const userId = chatId
     // چک کردن آیا کاربر استارت زده یا نه
-    if (!startedUsers.includes(userId))
+    if (!startedUsers.includes(userId) && !userMessages[userId])
     {
         bot.sendMessage(chatId, 'برای شروع از دستور /start استفاده کنید.')
+    } else
+    {
+        const helpMessage = `
+        به مرکز راهنمایی ربات Markdown خوش آمدید:
+        🚦 دوستان برای استفاده از این ربات به دوتا کانال ما عضو شوید 🚦
+        /start_new_text -  ♻️ متن جدیدت رو بنویس ♻️
+        /help -  🆘 دسترسی به بخش راهنمایی 🆘
+        
+        اول متن مورد نظرت رو بنویس، بعد انتخاب کن که میخوای چه فرمتی رو تحویل بگیری و ربات هم همون فرمت رو بهت تحویل میده 👌
+        `
+        bot.sendMessage(chatId, helpMessage)
+            .then(() =>
+            {
+                setTimeout(() =>
+                {
+                    helpRequested = false
+                }, 1000)
+            })
+            .catch((error) => console.error('Error sending help message:', error))
     }
 }
+
